@@ -168,6 +168,7 @@ public class BlueprintRouteBuilder extends RouteBuilder {
                 	String value = e.getIn().getBody(String.class);
                 	System.out.println(value);
                 })
+
                 .choice()
                 .when().simple("${body} != null")
                     .log("infinispan entry found!")
