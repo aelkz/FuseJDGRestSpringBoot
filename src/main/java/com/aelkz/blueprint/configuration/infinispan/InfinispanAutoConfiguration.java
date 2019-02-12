@@ -61,7 +61,7 @@ public class InfinispanAutoConfiguration {
                 .addServers(hostPort)
                 .maxRetries(maxEntries)
                 .security()
-                .connectionTimeout(3000)
+                .connectionTimeout(300000)
                 ;
 
         // new RemoteCacheManagerFactory().getRemoteCacheManager()

@@ -157,12 +157,20 @@ public class BlueprintRouteBuilder extends RouteBuilder {
 
         from("direct:database")
                 .streamCaching()
-                .log("preparing to call infinispan with handle=${header.handle}")
+                .log("preparing to call infinispan with handle='${header.handle}'")
+                
                 .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.GET)
-                .setHeader(InfinispanConstants.KEY).simple("${header.handle}", Long.class)
-                .to("infinispan:default?cacheContainer=#remoteCacheContainer")
+                .setHeader(InfinispanConstants.KEY).constant("123")
+                
+                .to("infinispan?cacheContainer=#remoteCacheContainer")
+                .to("log:org.apache.camel.component.infinispan?level=INFO&showAll=true&multiline=true")
+                .process(e -> {
+                	String value = e.getIn().getBody(String.class);
+                	System.out.println(value);
+                })
+
                 .choice()
-                .when().simple("${header.CamelInfinispanOperationResult} != null")
+                .when().simple("${body} != null")
                     .log("infinispan entry found!")
                     .process(keyValueParserProcessor)// TODO - must finish process exchange
                     .process(restEndpointMapResponseProcessor)
@@ -192,13 +200,14 @@ public class BlueprintRouteBuilder extends RouteBuilder {
                 .split().body().streaming()
                 .log("key/value object: ${body}")
                 .process(extractCacheKeyProcessor)
-                .setHeader(InfinispanConstants.KEY).simple("${header.objKey}", Long.class)
-                .setHeader(InfinispanConstants.VALUE).simple("${body}")
+                .log("diogo '${header.objKey}'")
+                .setHeader(InfinispanConstants.KEY).constant("123")
+                .setHeader(InfinispanConstants.VALUE).simple("RAPHAEL")
                 .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT)
                 //.setHeader(InfinispanConstants.LIFESPAN_TIME).constant(3600L)
                 //.setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.SECONDS.toString())
                 .log(LoggingLevel.INFO, "infinispan PUT operation called.")
-                .to("infinispan:default?cacheContainer=#remoteCacheContainer");
+                .to("infinispan?cacheContainer=#remoteCacheContainer");
     }
 
 }
