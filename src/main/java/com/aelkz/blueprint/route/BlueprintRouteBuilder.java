@@ -159,7 +159,6 @@ public class BlueprintRouteBuilder extends RouteBuilder {
             .id(RouteEnum.DIRECT_API.getId())
             .description(RouteEnum.DIRECT_API.getDescription())
             .streamCaching()
-            .setBody(simple("hello"))
             .to(RouteEnum.DIRECT_FETCH_DATA.getUri());
 
         from(RouteEnum.DIRECT_FETCH_DATA.getUri())
